@@ -1,0 +1,55 @@
+
+#include<stdio.h>
+#include<conio.h>
+
+typedef struct
+{
+	char is;
+	int nrMat;
+	char nume[25];
+	int grupa;
+	char an;
+	struct
+	{
+		char curs, sem;
+	}absente[14];
+}student;
+void listare(const char* numebin, const char* numetext)
+{
+	FILE* f, * g;
+	student s;
+	int i;
+	g = NULL;
+	f = fopen(numebin, "rb");
+	if (!f)printf("Fisierul nu poate fi gasit.");
+	else
+	{
+		g = fopen(numetext, "w");
+		fprintf(g, "Cod Matricol    Nume si Prenume   Grupa   An                  Absente               ", "");
+		fread(&s, sizeof(student), 1, f);
+		while (!feof(f))
+		{
+			if (s.is == 1)
+			{
+				fprintf(g, "\n%10d %17s %10d %4d \t", s.nrMat, s.nume, s.grupa, s.an);
+				
+				for (i = 0; i <= 14; i++)
+				{
+					fprintf(g, "%d ", s.absente[i].curs);
+				}
+				
+				fprintf(g, "\n");
+			}
+			fread(&s, sizeof(student), 1, f);
+			
+		}
+	}
+	fclose(f);
+	fclose(g);
+}
+int main()
+{
+	listare("Fis_relativ_abs.dat", "FisierText_Initial.txt");
+	_getch();
+	return 0;
+}
