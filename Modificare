@@ -1,0 +1,55 @@
+
+#include<stdio.h>
+#include<conio.h>
+
+typedef struct
+{
+	char is;
+	int nrMat;
+	char nume[25];
+	int grupa;
+	char an;
+	struct
+	{
+		char curs, sem;
+	}absente[14];
+}student;
+int main()
+{
+	FILE* f;
+	student s;
+	int cod, absenta, tip, ct = 0;;
+	f = fopen("Fis_relativ_abs.dat", "rb+");
+	printf("Codul matricol: ");
+	scanf("%d", &cod);
+	while(!feof(stdin))
+	{
+		ct = 0;
+		fread(&s, sizeof(student), 1, f);
+		while (!feof(f))
+		{
+			if (s.nrMat == cod && s.is)
+			{
+				
+				printf("Care este materia la care schimbam absentele: ");
+				scanf("%d", &absenta);
+				printf("Seminar sau curs?(0/1) ");
+				scanf("%d", &tip);
+				printf("Care este numarul nou de absente? ");
+				if (tip == 1)scanf("%d", &s.absente[absenta].curs);
+				else scanf("%d", &s.absente[absenta].sem);
+				
+				fseek(f, ftell(f) - sizeof(student),SEEK_SET);
+				fwrite(&s, sizeof(student), 1, f);
+				fseek(f, 0, 1);
+				ct++;
+			}
+			fread(&s, sizeof(student), 1, f);
+		}
+		if (ct == 0)printf("Nu a putut fi gasit student cu acest numar matricol.");
+		printf("\nNoul cod matricol: ");
+		scanf("%d", &cod);
+	}
+	_getch();
+	return 0;
+}
